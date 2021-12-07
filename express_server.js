@@ -6,6 +6,7 @@ app.set("view engine", "ejs");
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
+  
 };
 
 const bodyParser = require("body-parser");
@@ -55,7 +56,7 @@ app.get("/urls/new", (req, res) => {
 
 //Use the shortURL from the route parameter to lookup it's associated longURL from the urlDatabase
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: req.params.urlDatabase/* What goes here? */ };
+  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL]/* What goes here? */ };
   res.render("urls_show", templateVars);
 });
 
@@ -65,12 +66,13 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-function generateRandomString() {
-  var characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  var result = ""
-  var charactersLength = characters.length;
+// function generateRandomString(longURL) {
+//   //let characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+//   let result = ""
+//   let charactersLength = characters.length;
   
-  for ( var i = 0; i < 5 ; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-};
+//   for ( let i = 0; i <= 5 ; i++ ) {
+//       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+//       return result;
+//   }
+// };
