@@ -8,13 +8,20 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
   
 };
-
+//after installing npm install body-parser we add the bodyParser code. The body-parser library will convert the request body from a Buffer into string that we can read. It will then add the data to the req(request) object under the key body.
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.post("/urls", (req, res) => {
+  const shortURL = generateRandomString();
+  const longURL = req.body.longURL;   
+  console.log("testing POST URLS");
   console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  
+  urlDatabase[shortURL] = longURL; //trying to append new URL to database
+  console.log(urlDatabase);
+  //res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  res.redirect(`/urls/${shortURL}`);
 });
 
 app.get("/", (req, res) => {
@@ -50,6 +57,8 @@ app.get("/hello", (req, res) => {
   const templateVars = { greeting: 'Hello World!' };
   res.render("hello_world", templateVars);
 });
+
+//Add a GET Route to Show the Form - URL shotening part 1
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
@@ -60,12 +69,25 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+app.get("/u/:shortURL", (req, res) => {
+  // const longURL = ...
+  res.redirect(longURL);
+});
 
+app.get("/u/:shortURL", (req, res) => {
+  // const longURL = ...
+  res.redirect(longURL);
+});
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-function generateRandomString(longURL) {
-   Math.random().toString(36).substr(2, 6);}
+
+//stack overflow
+function generateRandomString() {
+  return Math.random().toString(36).substr(2, 6);
+  
+};
+
   
