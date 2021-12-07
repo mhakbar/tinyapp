@@ -8,6 +8,14 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({extended: true}));
+
+app.post("/urls", (req, res) => {
+  console.log(req.body);  // Log the POST request body to the console
+  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+});
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -41,6 +49,9 @@ app.get("/hello", (req, res) => {
   const templateVars = { greeting: 'Hello World!' };
   res.render("hello_world", templateVars);
 });
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
 
 //Use the shortURL from the route parameter to lookup it's associated longURL from the urlDatabase
 app.get("/urls/:shortURL", (req, res) => {
@@ -48,6 +59,18 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+function generateRandomString() {
+  var characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  var result = ""
+  var charactersLength = characters.length;
+  
+  for ( var i = 0; i < 5 ; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+};
