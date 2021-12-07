@@ -29,6 +29,12 @@ app.get("/set", (req, res) => {
   res.send(`a = ${a}`);
  });
 
+ //In express_server.js, add a new route handler for "/urls" and use res.render() to pass the URL data to our template.
+ app.get("/urls", (req, res) => {
+  const templateVars = { urls: urlDatabase };
+  res.render("urls_index", templateVars);
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
