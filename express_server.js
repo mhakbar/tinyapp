@@ -42,6 +42,12 @@ app.get("/hello", (req, res) => {
   res.render("hello_world", templateVars);
 });
 
+//Use the shortURL from the route parameter to lookup it's associated longURL from the urlDatabase
+app.get("/urls/:shortURL", (req, res) => {
+  const templateVars = { shortURL: req.params.shortURL, longURL: req.params.urlDatabase/* What goes here? */ };
+  res.render("urls_show", templateVars);
+});
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
