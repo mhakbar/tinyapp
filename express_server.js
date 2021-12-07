@@ -66,13 +66,6 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-// function generateRandomString(longURL) {
-//   //let characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-//   let result = ""
-//   let charactersLength = characters.length;
+function generateRandomString(longURL) {
+   Math.random().toString(36).substr(2, 6);}
   
-//   for ( let i = 0; i <= 5 ; i++ ) {
-//       result += characters.charAt(Math.floor(Math.random() * charactersLength));
-//       return result;
-//   }
-// };
