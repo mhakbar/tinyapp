@@ -17,16 +17,24 @@ app.post("/urls", (req, res) => {
   const longURL = req.body.longURL;   
   console.log("testing POST URLS");
   console.log(req.body);  // Log the POST request body to the console
+
+
   
-  urlDatabase[shortURL] = longURL; //trying to append new URL to database
+  urlDatabase[shortURL] = longURL; //trying to append new URL to database. don't use "." notation, dot means string.
   console.log(urlDatabase);
   //res.send("Ok");         // Respond with 'Ok' (we will replace this)
-  res.redirect(`/urls/${shortURL}`);
+  res.redirect(`/urls/${shortURL}`);//redirects to the new short URL page.
 });
 
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
+
+app.post("/urls/:shortURL/delete", (req,res) => {
+  const shortURL = req.params.shortURL;
+  delete urlDatabase[shortURL];
+  res.redirect("/urls");
+  });
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
@@ -44,6 +52,8 @@ app.get("/set", (req, res) => {
  app.get("/fetch", (req, res) => {
   res.send(`a = ${a}`);
  });
+
+ 
 
  //In express_server.js, add a new route handler for "/urls" and use res.render() to pass the URL data to our template.
  app.get("/urls", (req, res) => {
