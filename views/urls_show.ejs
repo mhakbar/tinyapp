@@ -20,8 +20,14 @@
   </div>
   <div class="card text-center">
   <div> <h2 class ="Edit">Edit</h2></div>
-  <div><label for ="longURLedit">New URL:<input  type="text" name="longURLedit" placeholder="http://" style="width: 300px; margin: 1em"><button type="submit" class="btn btn-primary">Submit</button></p></input></label>
-  
+  <div>
+    <td><form method="POST" action="/urls/<%= shortURL %>/">
+    <label> New URL:</label>  
+    <input type="text" name="longURL" id="longURL" placeholder="<%= longURL %>" style="width: 300px; margin: 1em"/>
+   
+    <button type="submit" class="btn btn-primary">Submit</button></td>
+  </form>
+    
   </div> 
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

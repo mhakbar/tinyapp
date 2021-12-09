@@ -17,8 +17,6 @@ app.post("/urls", (req, res) => {
   const longURL = req.body.longURL;   
   console.log("testing POST URLS");
   console.log(req.body);  // Log the POST request body to the console
-
-
   
   urlDatabase[shortURL] = longURL; //trying to append new URL to database. don't use "." notation, dot means string.
   console.log(urlDatabase);
@@ -34,12 +32,26 @@ app.post("/urls/:shortURL/delete", (req,res) => {
   const shortURL = req.params.shortURL;
   delete urlDatabase[shortURL];
   res.redirect("/urls");
-  });
+  }); //delete works
 
   app.post("/urls/:shortURL/Edit", (req,res) => {
     const shortURL = req.params.shortURL;
     res.redirect(`/urls/${shortURL}`);
-    });
+    });//edit works
+
+  app.post("/urls/:id", (req,res) => {
+    const newlongURL = req.body.longURL;  
+    const shortURL = req.params.id;
+    console.log(newlongURL); 
+    urlDatabase[shortURL] = newlongURL; 
+    res.redirect('/urls');
+    
+    //trying to append new URL to database. don't use "." notation, dot means string.
+    //console.log(urlDatabase);
+      //res.send("Ok");         // Respond with 'Ok' (we will replace this)
+      //res.redirect(`/urls/${shortURL}`);
+     
+      });//submit button to edit the LONG URL
 
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
