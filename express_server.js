@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 app.set("view engine", "ejs");
+const cookieParser = require("cookie-parser");
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -12,7 +13,25 @@ const urlDatabase = {
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.post("/urls", (req, res) => {
+app.use(cookieParser());
+
+app.get("/urls", (req, res) => {
+  const templateVars = { urls: urlDatabase, username: req.cookies.username};
+  res.render("urls_index", templateVars);
+});
+
+app.post("/urls", (req,res) => {
+  const username = req.body.username;
+  res.cookie("username", username);
+  res.redirect("/urls");
+})//posting username on main page with login button
+
+app.get("/urls/new", (req,res) => {
+  const templateVars = { urls: urlDatabase, username: req.cookies.username};
+  res.render("urls_new", templateVars)
+})
+
+app.post("/urls/new", (req, res) => {
   const shortURL = generateRandomString();
   const longURL = req.body.longURL;   
   console.log("testing POST URLS");
@@ -39,11 +58,51 @@ app.post("/urls/:shortURL/delete", (req,res) => {
     res.redirect(`/urls/${shortURL}`);
     });//edit works
 
+
+  app.post("/urls/login", (req,res) => {
+      const username = req.body.userName;
+      res.cookie("username", username); //creating cookie for username
+      console.log(`logged in as ${username}`);
+      res.redirect(`/urls`);
+
+      // app.get('/login', (req, res) => {
+      //   const templateVars = {
+      //     email: req.cookies.email,
+      //     userID: req.cookies.userID
+      //   }
+        res.render("login",  templateVars);
+      });
+      //for login and username 
+
+      // app.get("/urls/login", (req, res) => {
+      //   const templateVars{
+      //     userID: req.cookies.
+      //   }
+      //   res.send(`<html><body>${username} <b>World</b></body></html>\n`);
+      // });
+
+      app.get('/login', (req, res) => {
+        const templateVars = {
+          userID: req.cookies.userName
+        }
+        res.render("login",  templateVars);
+      })
+      
+      // app.get('/login', (req, res) => {
+      //   const username = req.cookies.userName;
+      //   res.redirect("/urls");
+      // });
+      
+
+      
+        
+
   app.post("/urls/:id", (req,res) => {
     const newlongURL = req.body.longURL;  
     const shortURL = req.params.id;
     console.log(newlongURL); 
     urlDatabase[shortURL] = newlongURL; 
+    
     res.redirect('/urls');
     
     //trying to append new URL to database. don't use "." notation, dot means string.
@@ -73,10 +132,7 @@ app.get("/set", (req, res) => {
  
 
  //In express_server.js, add a new route handler for "/urls" and use res.render() to pass the URL data to our template.
- app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
-  res.render("urls_index", templateVars);
-});
+
 
 
 //In the below function, the templateVars object contains the string 'Hello World' under the key greeting. We then pass the templateVars object to the template called hello_world.
