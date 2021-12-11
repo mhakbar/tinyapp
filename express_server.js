@@ -9,11 +9,61 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
   
 };
+
+const users = { 
+  "userRandomID": {
+    id: "userRandomID", 
+    email: "user@example.com", 
+    password: "purple-monkey-dinosaur"
+  },
+ "user2RandomID": {
+    id: "user2RandomID", 
+    email: "user2@example.com", 
+    password: "dishwasher-funk"
+  }
+}
+
 //after installing npm install body-parser we add the bodyParser code. The body-parser library will convert the request body from a Buffer into string that we can read. It will then add the data to the req(request) object under the key body.
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(cookieParser());
+
+app.post("/register", (req,res) => {
+  const id = generateRandomString();
+  const email = req.body.email;
+  const password = req.body.password;
+  //const newUser = users[id];
+
+
+  users[id] = {
+    id: id,
+    email: email,
+    password: password
+  }; //append new user to the existing user database.
+
+ 
+
+  console.log(id);//consle logs random generated ID. 
+  console.log(users); //console logs the whole updated database
+  console.log('new user: ', users[id]);//console logs just the new user
+
+  //res.cookie("username", email);//do not need to pass username cooke anymore, have to pass user_ID object
+  res.cookie("email", email);
+  res.cookie("username", id);
+  res.redirect("/urls");
+});
+
+app.get("/register", (req, res) => {
+  const templateVars = {
+
+    username: req.cookies.id,
+    email: req.cookies.email
+    //username: req.cookies.username
+  }
+  res.render("register", templateVars);
+ // console.log("register link");//to check if register function is being called on console.
+}); //calling the register page 
 
 app.post("/urls/new", (req, res) => {
   const shortURL = generateRandomString();
@@ -26,6 +76,8 @@ app.post("/urls/new", (req, res) => {
   //res.send("Ok");         // Respond with 'Ok' (we will replace this)
   res.redirect(`/urls/${shortURL}`);//redirects to the new short URL page.
 });
+
+
 
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase, username: req.cookies.username};
@@ -41,6 +93,7 @@ app.post("/urls", (req,res) => {
 
 app.post('/logout', (req, res) => {
   res.clearCookie('username');
+  res.clearCookie('email');
   res.redirect('/urls');
 });
 
@@ -49,18 +102,12 @@ app.get("/urls/new", (req,res) => {
   res.render("urls_new", templateVars)
 });
 
-app.get("/register", (req, res) => {
-  const templateVars = {
-    username: req.cookies.username
-  }
-  res.render("register", templateVars);
- // console.log("register link");//to check if register function is being called on console.
-}); //calling the register page (52-58)
 
-app.post("/urls/register", (req, res) => {
-  res.redirect("/url");
+
+// app.post("/urls/register", (req, res) => {
+//   res.redirect("/url");
   
-});//after you click the submic to try and create a new e-mail ID.
+// });//after you click the submic to try and create a new e-mail ID.
 
 app.get("/", (req, res) => {
   res.send("Hello!");
