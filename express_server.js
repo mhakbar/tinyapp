@@ -15,6 +15,18 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(cookieParser());
 
+app.post("/urls/new", (req, res) => {
+  const shortURL = generateRandomString();
+  const longURL = req.body.longURL;   
+  console.log("testing POST URLS");
+  console.log(req.body);  // Log the POST request body to the console
+  
+  urlDatabase[shortURL] = longURL; //trying to append new URL to database. don't use "." notation, dot means string.
+  console.log(urlDatabase);
+  //res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  res.redirect(`/urls/${shortURL}`);//redirects to the new short URL page.
+});
+
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase, username: req.cookies.username};
   res.render("urls_index", templateVars);
@@ -35,19 +47,20 @@ app.post('/logout', (req, res) => {
 app.get("/urls/new", (req,res) => {
   const templateVars = { urls: urlDatabase, username: req.cookies.username};
   res.render("urls_new", templateVars)
-})
-
-app.post("/urls/new", (req, res) => {
-  const shortURL = generateRandomString();
-  const longURL = req.body.longURL;   
-  console.log("testing POST URLS");
-  console.log(req.body);  // Log the POST request body to the console
-  
-  urlDatabase[shortURL] = longURL; //trying to append new URL to database. don't use "." notation, dot means string.
-  console.log(urlDatabase);
-  //res.send("Ok");         // Respond with 'Ok' (we will replace this)
-  res.redirect(`/urls/${shortURL}`);//redirects to the new short URL page.
 });
+
+app.get("/register", (req, res) => {
+  const templateVars = {
+    username: req.cookies.username
+  }
+  res.render("register", templateVars);
+ // console.log("register link");//to check if register function is being called on console.
+}); //calling the register page (52-58)
+
+app.post("/urls/register", (req, res) => {
+  res.redirect("/url");
+  
+});//after you click the submic to try and create a new e-mail ID.
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -151,6 +164,8 @@ app.get("/hello", (req, res) => {
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
+
+
 
 //Use the shortURL from the route parameter to lookup it's associated longURL from the urlDatabase
 app.get("/urls/:shortURL", (req, res) => {
