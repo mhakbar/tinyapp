@@ -27,8 +27,13 @@ const users = {
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.use(cookieParser());app.post("/login", (req,res) => {
-  const id = generateRandomString();
+app.use(cookieParser());
+
+
+
+app.post("/login", (req,res) => {
+  //const id = generateRandomString();
+  //const id = req.body.id;
   const email = req.body.email;
   const password = req.body.password;
   //const newUser = users[id];
@@ -36,37 +41,41 @@ app.use(cookieParser());app.post("/login", (req,res) => {
   if(!email || !password) {
     return res.status(400).send("Email and Password cannot be blank");
   }
-  const user = findUser(email, users);
-  if (!user) {
+  const user = findUser(email);
+
+  if(!user) {
     return res.status(400).send("No account has been found with this email");
   }
-  const passwordMatching = bcrypt.compareSync(password, user.password);
-  if (!passwordMatching) {
+  if(password !== user.password) {
     return res.status(403).send("Invalid email or password");
   }
 
-  users[id] = {
-    id: id,
-    email: email,
-    password: password
-  }; //append new user to the existing user database.
+
+  // users[id] = {
+  //   id: id,
+  //   email: email,
+  //   password: password
+  // }; //append new user to the existing user database.
 
  
 
-  console.log(id);//consle logs random generated ID. 
-  console.log(users); //console logs the whole updated database
-  console.log('new user: ', users[id]);//console logs just the new user
+  // console.log(id);//consle logs random generated ID. 
+  // console.log(users); //console logs the whole updated database
+  // console.log('new user: ', users[id]);//console logs just the new user
 
   //res.cookie("username", email);//do not need to pass username cooke anymore, have to pass user_ID object
+  
   res.cookie("email", email);
-  res.cookie("username", id);
+  res.cookie("username", user.id);
+  // res.password("password", password);
   res.redirect("/urls");
+  
 });
 app.get("/login", (req, res) => {
   const templateVars = {
 
     username: req.cookies.id,
-    email: req.cookies.email
+    email: req.cookies.email,
     //username: req.cookies.username
   }
   res.render("login", templateVars);
@@ -105,6 +114,8 @@ app.post("/register", (req,res) => {
   //res.cookie("username", email);//do not need to pass username cooke anymore, have to pass user_ID object
   res.cookie("email", email);
   res.cookie("username", id);
+  //res.cookie("password",password);
+  
   res.redirect("/urls");
 });
 
@@ -148,6 +159,7 @@ app.post("/urls", (req,res) => {
 app.post('/logout', (req, res) => {
   res.clearCookie('username');
   res.clearCookie('email');
+  res.clearCookie('password');
   res.redirect('/urls');
 });
 
