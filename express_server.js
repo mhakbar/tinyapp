@@ -27,13 +27,67 @@ const users = {
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.use(cookieParser());
+app.use(cookieParser());app.post("/login", (req,res) => {
+  const id = generateRandomString();
+  const email = req.body.email;
+  const password = req.body.password;
+  //const newUser = users[id];
+
+  if(!email || !password) {
+    return res.status(400).send("Email and Password cannot be blank");
+  }
+  const user = findUser(email, users);
+  if (!user) {
+    return res.status(400).send("No account has been found with this email");
+  }
+  const passwordMatching = bcrypt.compareSync(password, user.password);
+  if (!passwordMatching) {
+    return res.status(403).send("Invalid email or password");
+  }
+
+  users[id] = {
+    id: id,
+    email: email,
+    password: password
+  }; //append new user to the existing user database.
+
+ 
+
+  console.log(id);//consle logs random generated ID. 
+  console.log(users); //console logs the whole updated database
+  console.log('new user: ', users[id]);//console logs just the new user
+
+  //res.cookie("username", email);//do not need to pass username cooke anymore, have to pass user_ID object
+  res.cookie("email", email);
+  res.cookie("username", id);
+  res.redirect("/urls");
+});
+app.get("/login", (req, res) => {
+  const templateVars = {
+
+    username: req.cookies.id,
+    email: req.cookies.email
+    //username: req.cookies.username
+  }
+  res.render("login", templateVars);
+ // console.log("register link");//to check if register function is being called on console.
+}); //calling the login page 
+
+
 
 app.post("/register", (req,res) => {
   const id = generateRandomString();
   const email = req.body.email;
   const password = req.body.password;
   //const newUser = users[id];
+
+  if(!email || !password) {
+    return res.status(400).send("Email and Password cannot be blank");
+  }
+  const user = findUser(email);
+  if(user) {
+    return res.status(400).send("An account already exist with this email address");
+  }
 
 
   users[id] = {
@@ -241,4 +295,12 @@ function generateRandomString() {
   
 };
 
-  
+const findUser = (email) => {
+  for (const userId in users) {
+    const user = users[userId];
+    if (user.email === email) {
+      return user;
+    }
+  }
+  return null;
+}
