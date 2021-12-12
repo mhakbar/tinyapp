@@ -74,7 +74,7 @@ app.post("/login", (req,res) => {
 app.get("/login", (req, res) => {
   const templateVars = {
 
-    username: req.cookies.id,
+    username: req.cookies.username,
     email: req.cookies.email,
     //username: req.cookies.username
   }
@@ -122,10 +122,11 @@ app.post("/register", (req,res) => {
 app.get("/register", (req, res) => {
   const templateVars = {
 
-    username: req.cookies.id,
+    username: req.cookies.username,
     email: req.cookies.email
     //username: req.cookies.username
   }
+  console.log(templateVars);
   res.render("register", templateVars);
  // console.log("register link");//to check if register function is being called on console.
 }); //calling the register page 
@@ -135,7 +136,7 @@ app.post("/urls/new", (req, res) => {
   const longURL = req.body.longURL;   
   console.log("testing POST URLS");
   console.log(req.body);  // Log the POST request body to the console
-  
+  //res.cookie("username", users.id)
   urlDatabase[shortURL] = longURL; //trying to append new URL to database. don't use "." notation, dot means string.
   console.log(urlDatabase);
   //res.send("Ok");         // Respond with 'Ok' (we will replace this)
@@ -145,13 +146,14 @@ app.post("/urls/new", (req, res) => {
 
 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase, username: req.cookies.username};
+  const templateVars = { urls: urlDatabase, username: req.cookies.username /*req.cookies.username*/};
   res.render("urls_index", templateVars);
 });
 
 app.post("/urls", (req,res) => {
-  const username = req.body.username;
-  res.cookie("username", username);
+  //const username = req.body.username;
+  res.cookie("username", users.id)
+  //res.cookie("username", username);
   res.redirect("/urls");
 })//posting username on main page with login button
 
@@ -164,7 +166,11 @@ app.post('/logout', (req, res) => {
 });
 
 app.get("/urls/new", (req,res) => {
-  const templateVars = { urls: urlDatabase, username: req.cookies.username};
+  const templateVars = { 
+    urls: urlDatabase, 
+    username: req.cookies.username,
+    email: req.cookies.email,
+  };
   res.render("urls_new", templateVars)
 });
 
@@ -192,7 +198,7 @@ app.post("/urls/:shortURL/delete", (req,res) => {
 
 
   app.post("/urls/login", (req,res) => {
-      const username = req.body.userName;
+      const username = req.body.username;
       res.cookie("username", username); //creating cookie for username
       console.log(`logged in as ${username}`);
       res.redirect(`/urls`);
@@ -215,7 +221,9 @@ app.post("/urls/:shortURL/delete", (req,res) => {
 
       app.get('/login', (req, res) => {
         const templateVars = {
-          userID: req.cookies.userName
+          username: req.cookies.username
+          
+          //req.cookies.userName
         }
         res.render("login",  templateVars);
       })
